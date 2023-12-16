@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Quality Predictor</title>
+
+     <!-- Bootstrap CSS -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.12.9/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        #map {
+            height: 500px; /* Increased height for a better view */
+            border: 3px solid #007BFF; /* Blue border for the map */
+            margin-top: 10px;
+        }
+        .container {
+            text-align: center;
+            margin: auto;
+            width: 80%;
+            padding: 10px;
+        }
+        .title {
+            font-size: 24px;
+            color: #000; /* Darker color for the title */
+            font-weight: bold; /* Make the title bold */
+            margin-bottom: 0px; /* Align with the map */
+        }
+        .instructions {
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+/* ... (rest of your styles remain unchanged) */
+
+.title {
+    font-size: 28px;
+    color: #007BFF; /* Blue color for the title */
+    font-weight: bold;
+    background-color: #f0f8ff; /* Light blue background for aesthetic */
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.instructions,  .prediction-display {
+    background-color: #e6f7ff; /* Light blue background for better visibility */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.prediction-display {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0056b3; /* Darker blue for better readability */
+    margin-bottom: 0;
+}
+
+/* This style will create a highlighted rectangle around the prediction text */
+.prediction-display {
+    border: 2px solid #007BFF; /* Blue border for the prediction display */
+    display: inline-block;
+    width: auto;
+    margin-top: 20px;
+}
+
+#map {
+    height: 500px; /* Decrease the height to make the map square */
+ /*   width: 600px; /* Set a fixed width to make the map square */
+    border: 3px solid #007BFF;
+    margin: 10px auto; /* Center the map */
+}
+
+.container {
+    text-align: center;
+    margin: auto;
+    width: 50%; /* Adjust the width of the container to fit the map */
+    padding: 10px;
+}
+
+/* Remove the default margins from the title and instructions to fit everything on the page */
+.title, .instructions {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Add styles for the prediction display */
+.prediction-display {
+    font-size: 1.2em; /* Larger font size for prediction */
+    color: #007BFF; /* Blue color to match the map border */
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #007BFF;
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #f0f8ff;
+}
+
+
+.container {
+    text-align: center;
+    margin: auto;
+    width: 80%;
+    padding: 10px;
+}
+
+
+    </style>
+</head>
+<body>
+
+
+
+
+    <div class="container">
+        <div class="container2 header-bg">
+
+
+
+            <div>
+
+
+                <img src="https://jalshakti.gov.in/themes/jalshakti/images/national_emblem.svg" class="iconDetails" <img
+                    src="https://jalshakti.gov.in/themes/jalshakti/images/JAL_JEEVAN_Logo.png" alt="Skill India">
+                <img src="https://jalshakti.gov.in//themes/jalshakti/images/swach-bharat-logo.png" alt="Swachh Bharat">
+                <img src="https://jalshakti.gov.in/themes/jalshakti/images/logo_azadi.svg"
+                    style="width: 107px;padding-top: 10px;">
+                <img src="https://jalshakti.gov.in/themes/jalshakti/images/sso.png"
+                    style="width: 107px;padding-top: 10px;">
+                <img src="https://jalshakti.gov.in/themes/jalshakti/images/g20-logo.png"
+                    style="width: 107px;padding-top: 10px;">
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">AI ENABLED WATER WELL PREDICTOR</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/index.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about.html">about us</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact.html">Contact</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/info.html">info</a>
+                </li>
+
+
+
+
+
+
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" >Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+
+
+    </nav>
+
+
+
+
+
+
+
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function LocationPicker() {
+            const [position, setPosition] = useState(null);
+            const [prediction, setPrediction] = useState(null);
+
+            useEffect(() => {
+                const L = window.L;
+                const mapCenter = [22.351, 78.667]; // More precise centering on India
+                const mapBounds = new L.LatLngBounds(
+                    new L.LatLng(6.4627, 68.1097), // Adjusted bounds to crop closer to India
+                    new L.LatLng(37.5133, 97.3954)
+                );
+                const map = L.map('map', {
+                    center: mapCenter,
+                    zoom: 5,
+                    maxBounds: mapBounds,
+                    maxBoundsViscosity: 1.0,
+                });
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors',
+                }).addTo(map);
+
+                map.on('click', function(e) {
+                    setPosition(e.latlng);
+                    // Make sure a new prediction is made even if the same location is clicked
+                    setPrediction(null); // Reset prediction while waiting for new one
+                    axios.post('http://localhost:5000/predict', {
+                        latitude: e.latlng.lat,
+                        longitude: e.latlng.lng
+                    })
+                    .then(function (response) {
+                        setPrediction(response.data.prediction);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        setPrediction('Error getting prediction');
+                    });
+                });
+            }, []);
+
+            
+                return (
+        <div className="container">
+            <h1 className="title">Water Quality Prediction</h1>
+            <div className="instructions">Please click on the map to select a location for water quality prediction.</div>
+            <div id="map"></div>
+            {prediction !== null && (
+                <div className="prediction-display">Prediction: {prediction}</div>
+            )}
+        </div>
+    );
+}
+        
+        
+
+        ReactDOM.render(<LocationPicker />, document.getElementById('root'));
+    </script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</body>
+</html>
